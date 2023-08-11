@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    <div class="main">
+      <h1>Ragistration Numbers</h1>
+      <p class="warningMessage center warning">{{errorMessage}}</p>
+      <div class="registrationNumber">
+        <h2 class="regisrationLabel">Registration number :</h2>
+        <form action="/reg_numbers" method="POST">
+        <input
+          type="text"
+          name="Reg"
+          value=""
+          placeholder="  Enter registration number"
+          class="town-areas"
+          {{!-- required --}}
+        />
+      </div>
+      <div class="buttons">
+        
+            <button class="addButtonTwo button" type="submit" name="button">
+                Add
+            </button>
+        </form>
+        <button class="clearButtonTwo button" type="button" name="button">
+          Clear
+        </button>
+      </div>
+      <form action="/reg_numbers_filter" method="POST">
+      <div class="show-section">
+        <label for="town" class="townSelect"
+          ><p>Town:</p>
+          <select id="town" name="town" class="Select">
+            <option value="" data-name="All Towns">Select Town</option>
+            <option value="CJ" data-name="paarl">paarl (CJ 122122)</option>
+            <option value="CY" data-name="Bellville">Bellville (CY 122122)</option>
+            <option value="CL" data-name="Stellenbosch">Stellenbosch (CL 122122)</option>
+            <option value="CK" data-name="Malmesbury">Malmesbury (CK 122122)</option>
+            <option value="CA" data-name="CapeTown">CapeTown (CA 122122)</option>
+            <option value="CF" data-name="Kuilsriver">Kuilsriver (CF 122122)</option>
+          </select>
+        </label>
+        <input type="hidden" name="data-name" id="data-name" value="" />
+        <button class="showButtonTwo button" id="show" type="submit" name="button">
+          Show
+        </button>
+      </div>
+      </form>
+
+      <div class="numberPlates">
+          {{!-- {{#if errorMessageTown}} --}}
+          <p class="warningMessageTown center warning">{{errorMessageTown}}</p>
+          {{!-- {{/if}} --}}
+         <ul  id="plate-container">
+            {{#each list}}
+            <li>{{this}}</li>
+            {{/each}}
+         </ul>
+      </div>
+    </div>
+    {{!-- <script type="text/x-template" class="userTemplate"> --}}
+
+  {{!-- </script> --}}
+  </body>
+
+</html>
