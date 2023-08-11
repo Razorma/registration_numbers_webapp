@@ -41,10 +41,11 @@ app.get('/',  function (req, res) {
   
   
   app.post("/reg_numbers",  function (req, res) {
+    const allowed = /^C[FKLAYJ](\s\d{1,6}|\s\d{1,3}-\d{1,3})*$/;
     if(req.body.Reg===""){
       req.flash('error', 'Please enter Registration number');
-    }else{
-      req.flash('error', regNumbers.getError());
+    }else if(!allowed.test(req.body.Reg.toUpperCase())){
+      req.flash('error', "Enter only registrations from Paarl, Bellville, Stellenbosch, Malmesbury, Cape-Town, and Kuilsriver (See the select town Dropdown menu for formats)");
     }
    
     regNumbers.setRegNumber(req.body.Reg)
@@ -53,7 +54,6 @@ app.get('/',  function (req, res) {
     }else{
       regNumbers.setTown(prefix)
     }
-    console.log(regNumbers.getRegNumbers())
       res.redirect("/")
   });
   app.post("/reg_numbers_filter",  function (req, res) {
@@ -64,7 +64,7 @@ app.get('/',  function (req, res) {
       if(req.body["data-name"]===""){
         dataname = "All Town"
       }
-      req.flash('errorTown',`There are no registration Numbers From ${dataname}`)
+      req.flash('errorTown',`There are no registration Numbers From ${req.body["data-name"]}`)
     }
       res.redirect('/'); 
   });

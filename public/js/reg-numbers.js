@@ -16,6 +16,6 @@ let town = document.getElementById("town")
 town.addEventListener("change", function () {
     let selectedOption = this.options[this.selectedIndex];
     let dataName = selectedOption.getAttribute("data-name");
-    let data = document.getElementById("data-name").value
-       data= dataName;
+    // let data = document.getElementById("data-name").value
+    document.getElementById("data-name").value= dataName;
 });

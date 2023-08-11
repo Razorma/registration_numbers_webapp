@@ -11,8 +11,9 @@ export default function displayRegNumbers() {
     let message = ""
     const allowed = /^C[FKLAYJ](\s\d{1,6}|\s\d{1,3}-\d{1,3})*$/;
     function setRegNumber(reg) {
-
+        message = ""
         if (allowed.test(reg.toUpperCase())) {
+            message = ""
             trackRegistrations = 0
             const regs = reg.replace(/[\s-]/g, '')
             if (regNumbers[regs.toUpperCase()] === undefined) {
