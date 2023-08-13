@@ -1,5 +1,7 @@
 let regNumbers = {}
 let townNumbers = []
+let currentReg = "";
+
 
 
 
@@ -20,6 +22,7 @@ export default function displayRegNumbers() {
                 registrationCounter++
 
                 regNumbers[regs.toUpperCase()] = regs.toUpperCase().replace(/(.{2})/, '$1 ')
+                currentReg = regs.toUpperCase().replace(/(.{2})/, '$1 ');
             } else {
                 trackRegistrations++
                 regNumbers[regs.toUpperCase()] = regs.toUpperCase().replace(/(.{2})/, '$1 ')
@@ -51,6 +54,24 @@ export default function displayRegNumbers() {
     function getAllTown() {
         return townChosen
     }
+    function checkTown() {
+        if (currentReg.startsWith("CA")) {
+            return "CapeTown"
+        }else if(currentReg.startsWith("CJ")){
+            return "paarl"
+        }else if(currentReg.startsWith("CY")){
+            return "Bellville"
+        }else if(currentReg.startsWith("CL")){
+            return "Stellenbosch"
+        }else if(currentReg.startsWith("CK")){
+            return "Malmesbury"
+        }else if(currentReg.startsWith("CF")){
+            return "Kuilsriver"
+        }
+    }
+    function getCurrentReg() {
+        return currentReg
+    }
 
     function getTown() {
         return townChosen
@@ -70,6 +91,8 @@ export default function displayRegNumbers() {
         getTown,
         getError,
         trackReg,
+        checkTown,
+        getCurrentReg
     }
 }
 

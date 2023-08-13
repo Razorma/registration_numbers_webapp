@@ -3,7 +3,7 @@
   <body>
     <div class="main">
       <h1>Ragistration Numbers</h1>
-      <p class="warningMessage center warning">{{errorMessage}}</p>
+      <p class="warningMessage center warning"><spanclass="warning">{{errorMessage}}</span><span class="information">{{successMessage}}</span></p>
       <div class="registrationNumber">
         <h2 class="regisrationLabel">Registration number :</h2>
         <form action="/reg_numbers" method="POST">
@@ -22,14 +22,20 @@
                 Add
             </button>
         </form>
-        <button class="clearButtonTwo button" type="button" name="button">
-          Clear
-        </button>
+        <form action="/reset" method="POST">
+          <button class="clearButtonTwo button" type="submit" name="button">
+            Clear
+          </button>
+        </form>
+        
       </div>
       <form action="/reg_numbers_filter" method="POST">
       <div class="show-section">
-        <label for="town" class="townSelect"
-          ><p>Town:</p>
+        <label for="town" class="townSelect">
+          <p>Town: {{#if TownSelected}}
+            <li class="theTownN">{{TownSelected}}</li>
+            {{/if}}
+          </p>
           <select id="town" name="town" class="Select">
             <option value="" data-name="All Towns">Select Town</option>
             <option value="CJ" data-name="paarl">paarl (CJ 122122)</option>
@@ -51,7 +57,7 @@
           <p class="warningMessageTown center warning">{{errorMessageTown}}</p>
          <ul  id="plate-container">
             {{#each list}}
-            <li>{{this}}</li>
+            <li>{{this.registration_number}}</li>
             {{/each}}
          </ul>
       </div>

@@ -18,8 +18,14 @@ app.use(session({
 }));
 app.use(flash());
 
-// import {getTown} from './database.js';
-// getTown()
+import {
+  addRegistrationNumberForTown,
+  getRegistrations,
+  getRegistrationNumberForTown,
+  removeAllRegNumbers,
+} from './database.js';
+
+
 // Setup the Handlebars view engine
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
@@ -30,52 +36,98 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use(bodyParser.json())
 let prefix = ""
-app.get('/',  function (req, res) {
+let list = []
+let town = []
+let dataNameFix = ""
+app.get('/', async function (req, res) {
   
-      res.render('home',{
-        list:regNumbers.getAllTown(),
-        errorMessage:req.flash('error'),
-        errorMessageTown:req.flash('errorTown')
-      })
+     
+      try {
+        if(prefix===""){
+          list = await getRegistrations()
+        }else if(prefix!==""){
+          list = town
+        }
+        
+        res.render('home',{
+          list,
+          errorMessage:req.flash('error'),
+          errorMessageTown:req.flash('errorTown'),
+          TownSelected:req.flash('TownSelected'),
+          successMessage:req.flash('success')
+        })
+      } catch (error) {
+        console.error('Error:', error.message);
+      }
   });
   
   
-  app.post("/reg_numbers",  function (req, res) {
+  app.post("/reg_numbers", async function (req, res) {
     const allowed = /^C[FKLAYJ](\s\d{1,6}|\s\d{1,3}-\d{1,3})*$/;
     if(req.body.Reg===""){
       req.flash('error', 'Please enter Registration number');
     }else if(!allowed.test(req.body.Reg.toUpperCase())){
       req.flash('error', "Enter only registrations from Paarl, Bellville, Stellenbosch, Malmesbury, Cape-Town, and Kuilsriver (See the select town Dropdown menu for formats)");
     }
-   
+
     regNumbers.setRegNumber(req.body.Reg)
-    if(regNumbers.getRegNumbers().length===0){
-      regNumbers.setTown("")
-    }else{
-      regNumbers.setTown(prefix)
+   
+    try {
+      if(regNumbers.checkTown() !== ""){
+        await addRegistrationNumberForTown(regNumbers.getCurrentReg(),regNumbers.checkTown())
+      }
+      
+      if(regNumbers.getRegNumbers().length===0){
+        regNumbers.setTown("")
+      }else{
+        regNumbers.setTown(prefix)
+        req.flash('TownSelected',dataNameFix)
+        town = await getRegistrationNumberForTown(dataNameFix)
+      }
+  
+    } catch (error) {
+      console.error('Error:', error.message);
     }
+     
       res.redirect("/")
   });
-  app.post("/reg_numbers_filter",  function (req, res) {
-    regNumbers.setTown(req.body.town)
-    prefix = req.body.town
+  
+  app.post("/reg_numbers_filter", async function (req, res) {
     let dataname = req.body["data-name"]
-    if(regNumbers.getAllTown().length===0){
-      if(req.body["data-name"]===""){
-        dataname = "All Town"
+    req.flash('TownSelected',dataname)
+    prefix = req.body.town
+
+    regNumbers.setTown(req.body.town)
+    try {
+      if(req.body.town===""){
+        await getRegistrations()
+        let getRegs = await getRegistrations()
+        if(getRegs.length===0){
+          req.flash('errorTown',"No registration numbers, Please enter registration numbers")
+        }
+      }else{
+        town = await getRegistrationNumberForTown(dataname)
+        dataNameFix = dataname 
+        if(town.length===0){
+          if(req.body["data-name"]===""){
+            dataname = "All Town"
+          }
+          req.flash('errorTown',`There are no registration Numbers From ${req.body["data-name"]}`)
+        }
       }
-      req.flash('errorTown',`There are no registration Numbers From ${req.body["data-name"]}`)
+    } catch (error) {
+      console.error('Error:', error.message);
     }
       res.redirect('/'); 
   });
-  app.get("/counter/:name",  function (req, res) {
 
-      res.render('counter');
-  
-  });
-  
-  app.post("/reset",  function (req, res) {
-
+  app.post("/reset",  async function (req, res) {
+    try {
+      await removeAllRegNumbers()
+      req.flash('success', 'Registration numbers successesfully removed from storage.');
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
     res.redirect("/")
   });
   
@@ -86,9 +138,4 @@ app.get('/',  function (req, res) {
     });
   
   
-  
-  
-//   main().catch((error) => {
-//     console.error('An error occurred:', error);
-//   });
   

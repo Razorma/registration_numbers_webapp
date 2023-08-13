@@ -25,7 +25,12 @@ body{
     font-weight: 1000;
     box-shadow: 10px 10px 10px 0px rgba(0, 0, 0, 0.75)
 }
-
+.theTownN{
+    color:black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .registrationNumber h2::after {
     content: 'eg "CA 122122","CA 122-122",  "CA 122 122"';
     display: flex;
@@ -132,12 +137,6 @@ ul {
 
 @media(min-width:768px) {
 
-
-    /* body{
-        display: flex;
-        flex-direction: row;
-         
-    } */
     ul {
         display: flex;
         flex-wrap: wrap;
