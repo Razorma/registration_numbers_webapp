@@ -3,17 +3,19 @@
     margin: 0;
     box-sizing: border-box;
 }
-body{
+
+body {
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
 }
+
 .center {
     text-align: center;
     margin-left: auto;
     margin-right: auto;
 }
 
- li {
+li {
     height: 100%;
     border: 1px solid black;
     min-width: 70px;
@@ -25,12 +27,14 @@ body{
     font-weight: 1000;
     box-shadow: 10px 10px 10px 0px rgba(0, 0, 0, 0.75)
 }
-.theTownN{
-    color:black;
+
+.theTownN {
+    color: black;
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
 .registrationNumber h2::after {
     content: 'eg "CA 122122","CA 122-122",  "CA 122 122"';
     display: flex;
@@ -163,10 +167,12 @@ ul {
         margin-top: -100px;
         margin-bottom: 50px;
     }
+
     .warningMessage {
         margin-top: -100px;
         margin-bottom: 50px;
     }
+
     .warningMessageTown {
         margin-top: -100px;
         margin-bottom: 50px;
@@ -214,7 +220,7 @@ ul {
         min-height: 0px;
         width: 170px;
     }
-    
+
 
     #town {
         height: 30px;
@@ -230,16 +236,18 @@ ul {
     .showButton {
         margin-top: -27px;
     }
+
     .showButtonTwo {
         margin-top: -27px;
     }
 }
+
 @media(min-width:960px) {
 
-    body{
+    body {
         display: flex;
         flex-direction: row;
-          
+
     }
-    
+
 }

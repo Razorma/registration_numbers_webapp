@@ -1,30 +1,50 @@
-document.addEventListener('DOMContentLoaded', function(){
+// Execute the following code when the DOM content is loaded
+document.addEventListener('DOMContentLoaded', function () {
+    // Find the element with class "warningMessage"
     let messageElem = document.querySelector('.warningMessage');
-    if (messageElem.innerHTML !== ''){
-        setTimeout(function(){
+
+    // If the innerHTML of the element is not empty
+    if (messageElem.innerHTML !== '') {
+        // Set a timeout to clear the message after 3 seconds
+        setTimeout(function () {
             messageElem.innerHTML = '';
         }, 3000);
     }
+
+    // Find the element with class "warningMessageTown"
     let warningMessageTown = document.querySelector('.warningMessageTown');
-    if (warningMessageTown.innerHTML !== ''){
-        setTimeout(function(){
+
+    // If the innerHTML of the element is not empty
+    if (warningMessageTown.innerHTML !== '') {
+        // Set a timeout to clear the message after 3 seconds
+        setTimeout(function () {
             warningMessageTown.innerHTML = '';
         }, 3000);
     }
-    
 
-    if(document.querySelector('.infoMessage')){
-        if (document.querySelector('.infoMessage').innerHTML !== ''){
-            setTimeout(function(){
+    // If there is an element with class "infoMessage"
+    if (document.querySelector('.infoMessage')) {
+        // If the innerHTML of the element is not empty
+        if (document.querySelector('.infoMessage').innerHTML !== '') {
+            // Set a timeout to clear the message after 3 seconds
+            setTimeout(function () {
                 document.querySelector('.infoMessage').innerHTML = '';
             }, 3000);
         }
     }
-    
 });
-let town = document.getElementById("town")
+
+// Find the element with the id "town"
+let town = document.getElementById("town");
+
+// Add an event listener for the "change" event on the "town" element
 town.addEventListener("change", function () {
+    // Get the selected option
     let selectedOption = this.options[this.selectedIndex];
+
+    // Get the value of the "data-name" attribute from the selected option
     let dataName = selectedOption.getAttribute("data-name");
-    document.getElementById("data-name").value= dataName;
+
+    // Set the value of the input with id "data-name" to the retrieved dataName
+    document.getElementById("data-name").value = dataName;
 });
