@@ -48,3 +48,9 @@ town.addEventListener("change", function () {
     // Set the value of the input with id "data-name" to the retrieved dataName
     document.getElementById("data-name").value = dataName;
 });
+const submitReset = document.querySelector(".clearButtonTwo")
+submitReset.addEventListener("click", (event) => {
+    if (!confirm("Are you sure you want to delete all registration Numbers from storage?")) {
+        event.preventDefault();
+    }
+});

@@ -5,18 +5,25 @@ import bodyParser from "body-parser";
 import displayRegNumbers from "./registration_number.js";
 import flash from 'express-flash';
 import session from 'express-session';
-
 import pgPromise from 'pg-promise';
+import fs from 'fs';
 
 // Initialize pg-promise
 const pgp = pgPromise();
 
+//get the queries from the tables file 
+
+const sqlTableQueries = fs.readFileSync('tables.sql', 'utf-8');
+
+// Define the database connection string
+const connectionString = process.env.DATABASE_URL || 'postgres://bheka:OByrOSiZ7tqz1mAzx72ukmRZNAPr0Iol@dpg-cj5qva2cn0vc73flmoq0-a.oregon-postgres.render.com/razorma_r4tr';
+const ssl = { rejectUnauthorized: false }
+
+// Connect to the database using pgp
+const db = pgp({ connectionString, ssl });
 // Create an Express app instance
 let app = express();
-
-// Initialize the registration number display object
-const regNumbers = displayRegNumbers();
-
+export {sqlTableQueries,db}
 // Configure Express app settings
 app.use(session({ 
   secret: 'Razorma', 
@@ -26,12 +33,12 @@ app.use(session({
 app.use(flash());
 
 // Import database functions from './database.js'
-import {
-  addRegistrationNumberForTown,
-  getRegistrations,
-  getRegistrationNumberForTown,
-  removeAllRegNumbers,
-} from './database.js';
+import registrationNumbers from './database.js';
+import RegistrationRoutes from './routes/registrations.js';
+
+//get the ddatabase and routes function
+const registrationService = registrationNumbers(db,sqlTableQueries);
+const registrationRoutes = RegistrationRoutes(registrationService)
 
 // Setup the Handlebars view engine
 app.engine('handlebars', engine());
@@ -45,115 +52,20 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-// Initialize variables for prefix, list, town, and dataNameFix
-let prefix = ""
-let list = []
-let town = []
-let dataNameFix = ""
+
 
 // Define a route to handle GET requests to the root
-app.get('/', async function (req, res) {
-  try {
-    // Conditionally load registration numbers based on prefix
-    if (prefix === "") {
-      list = await getRegistrations();
-    } else if (prefix !== "") {
-      list = town;
-    }
-    
-    // Render the home template with data
-    res.render('home', {
-      list,
-      errorMessage: req.flash('error'),
-      errorMessageTown: req.flash('errorTown'),
-      TownSelected: req.flash('TownSelected'),
-      successMessage: req.flash('success')
-    });
-  } catch (error) {
-    console.error('Error:', error.message);
-  }
-});
+app.get('/', registrationRoutes.showAdd);
 
 // Define a route to handle POST requests to '/reg_numbers'
-app.post("/reg_numbers", async function (req, res) {
-  // Validate and process the submitted registration number
-  const allowed = /^C[FKLAYJ](\s\d{1,6}|\s\d{1,3}-\d{1,3})*$/;
-  if (req.body.Reg === "") {
-    req.flash('error', 'Please enter Registration number');
-  } else if (!allowed.test(req.body.Reg.toUpperCase())) {
-    req.flash('error', "Enter only registrations from Paarl, Bellville, Stellenbosch, Malmesbury, Cape-Town, and Kuilsriver (See the select town Dropdown menu for formats)");
-  }
-
-  regNumbers.setRegNumber(req.body.Reg);
-
-  try {
-    // Add registration number to database if associated with a town
-    if (regNumbers.checkTown() !== "") {
-      await addRegistrationNumberForTown(regNumbers.getCurrentReg(), regNumbers.checkTown());
-    }
-    
-    // Update town data based on registration numbers
-    if (regNumbers.getRegNumbers().length === 0) {
-      regNumbers.setTown("");
-    } else {
-      regNumbers.setTown(prefix);
-      req.flash('TownSelected', dataNameFix);
-      town = await getRegistrationNumberForTown(dataNameFix);
-    }
-  } catch (error) {
-    console.error('Error:', error.message);
-  }
-  
-  // Redirect to the root
-  res.redirect("/");
-});
+app.post("/reg_numbers", registrationRoutes.add);
 
 // Define a route to handle POST requests to '/reg_numbers_filter'
-app.post("/reg_numbers_filter", async function (req, res) {
-  // Update data based on town filter
-  let dataname = req.body["data-name"];
-  req.flash('TownSelected', dataname);
-  prefix = req.body.town;
-  regNumbers.setTown(req.body.town);
-
-  try {
-    if (req.body.town === "") {
-      await getRegistrations();
-      let getRegs = await getRegistrations();
-      if (getRegs.length === 0) {
-        req.flash('errorTown', "No registration numbers, Please enter registration numbers");
-      }
-    } else {
-      town = await getRegistrationNumberForTown(dataname);
-      dataNameFix = dataname;
-      if (town.length === 0) {
-        if (req.body["data-name"] === "") {
-          dataname = "All Town";
-        }
-        req.flash('errorTown', `There are no registration Numbers From ${req.body["data-name"]}`);
-      }
-    }
-  } catch (error) {
-    console.error('Error:', error.message);
-  }
-
-  // Redirect to the root
-  res.redirect('/');
-});
+app.post("/reg_numbers_filter", registrationRoutes.filter);
 
 // Define a route to handle POST requests to '/reset'
-app.post("/reset", async function (req, res) {
-  try {
-    // Remove all registration numbers from storage
-    await removeAllRegNumbers();
-    req.flash('success', 'Registration numbers successfully removed from storage.');
-  } catch (error) {
-    console.error('Error:', error.message);
-  }
-  
-  // Redirect to the root
-  res.redirect("/");
-});
+app.post("/reset", registrationRoutes.deleteAll);
+
 
 // Define the port for the server to listen on
 let PORT = process.env.PORT || 3001;
