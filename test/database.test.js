@@ -5,7 +5,7 @@ import {sqlTableQueries,db} from "../index.js"
 
 const registrationService = registrationNumbers(db,sqlTableQueries);
 describe('Database Functions', function () {
-    this.timeout(7000);
+    this.timeout(5000);
   before(async function () {
     await registrationService.createRegTable();
   });
