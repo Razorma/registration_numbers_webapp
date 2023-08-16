@@ -4,9 +4,13 @@ export default function registrationNumbers(db,create){
 
  // create the towns and registration_numbers tables
  async function createRegTable() {
+  try{
     await db.none(create);
+  }catch(error){
+    console.log("error",message.error)
+  }   
 }
-createRegTable()
+
 
   // create a function that adds ragistration numbers and gives them the town id
   async function addRegistrationNumberForTown(registrationNumber, townName) {
