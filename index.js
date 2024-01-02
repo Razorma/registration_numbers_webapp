@@ -16,7 +16,7 @@ const pgp = pgPromise();
 const sqlTableQueries = fs.readFileSync('tables.sql', 'utf-8');
 
 // Define the database connection string
-const connectionString = process.env.DATABASE_URL || 'postgres://bheka:OByrOSiZ7tqz1mAzx72ukmRZNAPr0Iol@dpg-cj5qva2cn0vc73flmoq0-a.oregon-postgres.render.com/razorma_r4tr';
+const connectionString = process.env.DATABASE_URL || 'postgres://tqaqpevb:ZSSpm1kgUg30_o7NzKfxgamjI5uNls3n@mel.db.elephantsql.com/tqaqpevb';
 const ssl = { rejectUnauthorized: false }
 
 // Connect to the database using pgp
